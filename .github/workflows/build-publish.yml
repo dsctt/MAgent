@@ -19,23 +19,47 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        include:
+        - os: ubuntu-latest
+          python: 36
+          platform: manylinux_x86_64
+        - os: ubuntu-latest
+          python: 37
+          platform: manylinux_x86_64
+        - os: ubuntu-latest
+          python: 38
+          platform: manylinux_x86_64
+        - os: ubuntu-latest
+          python: 39
+          platform: manylinux_x86_64
+
+        - os: macos-latest
+          python: 36
+          platform: macosx_x86_64
+        - os: macos-latest
+          python: 37
+          platform: macosx_x86_64
+        - os: macos-latest
+          python: 38
+          platform: macosx_x86_64
+        - os: macos-latest
+          python: 39
+          platform: macosx_x86_64
+        - os: macos-latest
+          python: 38
+          platform: macosx_arm64
+        - os: macos-latest
+          python: 39
+          platform: macosx_arm64
+
     steps:
     - uses: actions/checkout@v3
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.3.1
       env:
+        CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
         CIBW_ARCHS: all
-        CIBW_BUILD: cp36-macosx_x86_64 cp37-macosx_x86_64
-        # CIBW_BUILD: cp38-macosx_x86_64
-        # CIBW_BUILD: cp38-macosx_arm64
-        # CIBW_BUILD: cp39-macosx_x86_64
-        # CIBW_BUILD: cp39-macosx_arm64
-        # CIBW_BUILD: cp36-manylinux_x86_64
-        # CIBW_BUILD: cp37-manylinux_x86_64
-        # CIBW_BUILD: cp38-manylinux_x86_64
-        # CIBW_BUILD: cp39-manylinux_x86_64
-        
+        CIBW_BUILD_VERBOSITY: 1
     - name: Store wheels
       uses: actions/upload-artifact@v2
       with:
