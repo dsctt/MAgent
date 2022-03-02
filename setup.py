@@ -82,7 +82,7 @@ class CMakeBuild(build_ext):
 
 
 setuptools.setup(
-    name="magent",
+    name="d_magent",
     version="0.1.14",
     author="PettingZoo Team",
     author_email="justinkterry@gmail.com",
