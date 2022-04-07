@@ -937,15 +937,15 @@ int GridWorld::get_feature_size(GroupHandle group) {
  * render
  */
 void GridWorld::render() {
-    if (render_generator.get_save_dir() == "___debug___")
-        map.render();
-    else {
-        if (first_render) {
-            first_render = false;
-            render_generator.gen_config(groups, width, height);
-        }
-        render_generator.render_a_frame(groups, map);
-    }
+    //if (render_generator.get_save_dir() == "___debug___")
+    map.render();
+    // else {
+    //     if (first_render) {
+    //         first_render = false;
+    //         render_generator.gen_config(groups, width, height);
+    //     }
+    //     render_generator.render_a_frame(groups, map);
+    // }
 }
 
 } // namespace magent
