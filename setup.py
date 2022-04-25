@@ -98,7 +98,7 @@ class CMakeBuild(build_ext):
 
 
 setuptools.setup(
-    name="magent",
+    name="d-magent",
     version="0.2.0",
     author="Farama Foundation",
     author_email="jkterry@farama.org",
