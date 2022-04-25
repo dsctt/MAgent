@@ -67,6 +67,7 @@ jobs:
         CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
         CIBW_ARCHS: all
         CIBW_TEST_SKIP: "*-macosx_arm64"
+        MACOSX_DEPLOYMENT_TARGET: "12.0"
         CIBW_BUILD_VERBOSITY: 3
     - name: Store wheels
       uses: actions/upload-artifact@v2
