@@ -8,128 +8,143 @@ name: build-publish
 
 on:
   push:
-    branches: [master]
+    branches: [master, d_gh_actions_ci]
   pull_request:
     branches: [master]
   release:
     types: [published]
 
 jobs:
-  build-wheels:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-        # linux x86_64
-        - os: ubuntu-latest
-          python: 37
-          platform: manylinux_x86_64
-        - os: ubuntu-latest
-          python: 38
-          platform: manylinux_x86_64
-        - os: ubuntu-latest
-          python: 39
-          platform: manylinux_x86_64
-        - os: ubuntu-latest
-          python: 310
-          platform: manylinux_x86_64
-
-        # macos x86_64
-        - os: macos-latest
-          python: 37
-          platform: macosx_x86_64
-        - os: macos-latest
-          python: 38
-          platform: macosx_x86_64
-        - os: macos-latest
-          python: 39
-          platform: macosx_x86_64
-        - os: macos-latest
-          python: 310
-          platform: macosx_x86_64
-
-        # macos arm 
-        - os: macos-latest
-          python: 38
-          platform: macosx_universal2
-        - os: macos-latest
-          python: 39
-          platform: macosx_universal2
-        - os: macos-latest
-          python: 310
-          platform: macosx_universal2
-
+  build_wheels_macos:
+    name: Build wheels on macos-10.15
+    runs-on: macos-10.15
     steps:
-    - uses: actions/checkout@v3
-    - name: Build linux and macos wheels
-      uses: pypa/cibuildwheel@v2.4.0
-      env:
-        CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
-        CIBW_ARCHS: all
-        CIBW_BUILD_VERBOSITY: 1
-    - name: Store wheels
-      uses: actions/upload-artifact@v2
-      with:
-        path: ./wheelhouse/*.whl
+      - uses: actions/checkout@v2
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.4.0
+        env:
+          CIBW_ARCHS_MACOS: x86_64 universal2
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
+
+  # build-wheels:
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       include:
+  #       # linux x86_64
+  #       - os: ubuntu-latest
+  #         python: 37
+  #         platform: manylinux_x86_64
+  #       - os: ubuntu-latest
+  #         python: 38
+  #         platform: manylinux_x86_64
+  #       - os: ubuntu-latest
+  #         python: 39
+  #         platform: manylinux_x86_64
+  #       - os: ubuntu-latest
+  #         python: 310
+  #         platform: manylinux_x86_64
+
+  #       # macos x86_64
+  #       - os: macos-latest
+  #         python: 37
+  #         platform: macosx_x86_64
+  #       - os: macos-latest
+  #         python: 38
+  #         platform: macosx_x86_64
+  #       - os: macos-latest
+  #         python: 39
+  #         platform: macosx_x86_64
+  #       - os: macos-latest
+  #         python: 310
+  #         platform: macosx_x86_64
+
+  #       # macos arm 
+  #       - os: macos-latest
+  #         python: 38
+  #         platform: macosx_universal2
+  #       - os: macos-latest
+  #         python: 39
+  #         platform: macosx_universal2
+  #       - os: macos-latest
+  #         python: 310
+  #         platform: macosx_universal2
+
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Build linux and macos wheels
+  #     uses: pypa/cibuildwheel@v2.4.0
+  #     env:
+  #       CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
+  #       CIBW_ARCHS: all
+  #       CIBW_BUILD_VERBOSITY: 1
+  #   - name: Store wheels
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       path: ./wheelhouse/*.whl
       
-  build-src:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Build src
-      run: |
-        python -m pip install --upgrade pip
-        pip install wheel
-        python setup.py sdist
-    - name: Store src
-      uses: actions/upload-artifact@v2
-      with:
-        path: dist/*.tar.gz
+  # build-src:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Build src
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install wheel
+  #       python setup.py sdist
+  #   - name: Store src
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       path: dist/*.tar.gz
 
-  build-wheels-ms:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
-        include:
-        - os: windows-latest
+  # build-wheels-ms:
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+  #       include:
+  #       - os: windows-latest
 
-    steps:
-    - uses: actions/checkout@v3
+  #   steps:
+  #   - uses: actions/checkout@v3
     
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-        architecture: x64
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v3
+  #     with:
+  #       python-version: ${{ matrix.python-version }}
+  #       architecture: x64
 
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+  #   - name: Add MSBuild to PATH
+  #     uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Build wheel
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run:  |
-        pip install wheel cmake-build-extension
-        pip wheel .  --no-deps -w wheelhouse/ 
+  #   - name: Build wheel
+  #     working-directory: ${{env.GITHUB_WORKSPACE}}
+  #     run:  |
+  #       pip install wheel cmake-build-extension
+  #       pip wheel .  --no-deps -w wheelhouse/ 
         
-    - uses: actions/upload-artifact@v3
-      with:
-        path: ./wheelhouse/*.whl        
+  #   - uses: actions/upload-artifact@v3
+  #     with:
+  #       path: ./wheelhouse/*.whl        
         
-  publish:
-    runs-on: ubuntu-latest
-    needs:
-    - build-wheels
-    - build-wheels-ms
-    - build-src
-    if: github.event_name == 'release' && github.event.action == 'published'
-    steps:
-    - name: Download dists
-      uses: actions/download-artifact@v2
-      with:
-        name: artifact
-        path: dist
-    - name: Publish
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
+  # publish:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #   - build-wheels
+  #   - build-wheels-ms
+  #   - build-src
+  #   if: github.event_name == 'release' && github.event.action == 'published'
+  #   steps:
+  #   - name: Download dists
+  #     uses: actions/download-artifact@v2
+  #     with:
+  #       name: artifact
+  #       path: dist
+  #   - name: Publish
+  #     uses: pypa/gh-action-pypi-publish@release/v1
+  #     with:
+  #       password: ${{ secrets.PYPI_API_TOKEN }}
