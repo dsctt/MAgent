@@ -49,27 +49,25 @@ jobs:
           platform: macosx_x86_64
 
         # macos arm 
-        - os: macos-latest
+        - os: macos-10.15
           python: 38
-          platform: macosx_arm64
-        - os: macos-latest
+          platform: macosx_universal2
+        - os: macos-10.15
           python: 39
-          platform: macosx_arm64
-        - os: macos-latest
+          platform: macosx_universal2
+        - os: macos-10.15
           python: 310
-          platform: macosx_arm64
+          platform: macosx_universal2
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build wheels
-      uses: pypa/cibuildwheel@v2.3.1
+    - name: Build linux and macos wheels
+      uses: pypa/cibuildwheel@v2.4.0
       env:
         CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
         CIBW_ARCHS: all
-        CIBW_TEST_SKIP: "*-macosx_arm64"
-        MACOSX_DEPLOYMENT_TARGET: "12.0"
-        PYTHON_CROSSENV: 1
-        CIBW_BUILD_VERBOSITY: 3
+        CIBW_TEST_SKIP: *_arm64 *_universal2:arm64
+        CIBW_BUILD_VERBOSITY: 1
     - name: Store wheels
       uses: actions/upload-artifact@v2
       with:
