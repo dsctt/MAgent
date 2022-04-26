@@ -8,29 +8,13 @@ name: build-publish
 
 on:
   push:
-    branches: [master, d_gh_actions_ci]
+    branches: [master]
   pull_request:
     branches: [master]
   release:
     types: [published]
 
 jobs:
-  # build_wheels_macos:
-  #   name: Build wheels on macos-10.15
-  #   runs-on: macos-10.15
-  #   steps:
-  #     - uses: actions/checkout@v2
-
-  #     - name: Build wheels
-  #       uses: pypa/cibuildwheel@v2.4.0
-  #       env:
-  #         CIBW_ARCHS_MACOS: x86_64 arm64
-  #         CIBW_BUILD_VERBOSITY: 3
-
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         path: ./wheelhouse/*.whl
-
   build-wheels:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -64,7 +48,7 @@ jobs:
           python: 310
           platform: macosx_x86_64
 
-        # macos arm 
+        # macos arm64 
         - os: macos-latest
           python: 38
           platform: macosx_arm64
@@ -77,7 +61,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build linux and macos wheels
+    - name: Build wheels
       uses: pypa/cibuildwheel@v2.4.0
       env:
         CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform }}
