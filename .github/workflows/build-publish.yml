@@ -49,15 +49,15 @@ jobs:
         #   platform: macosx_x86_64
 
         # macos universal2
-        - os: macos-latest
-          python: 38
-          platform: macosx_universal2
-        - os: macos-latest
-          python: 39
-          platform: macosx_universal2
-        - os: macos-latest
-          python: 310
-          platform: macosx_universal2
+        # - os: macos-latest
+        #   python: 38
+        #   platform: macosx_universal2
+        # - os: macos-latest
+        #   python: 39
+        #   platform: macosx_universal2
+        # - os: macos-latest
+        #   python: 310
+        #   platform: macosx_universal2
 
     steps:
     - uses: actions/checkout@v3
